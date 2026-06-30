@@ -1,85 +1,392 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>AI 자기소개 챗봇</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>윤정 AI</title>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 20px;
-      background-color: #f7f7f7;
+    :root {
+      --ku-red: #8C1D40;
+      --ku-dark-red: #6F1531;
+      --soft-red: #F7EAEA;
+      --cream: #FFFDF8;
+      --line: #E8DED8;
+      --text: #222222;
+      --muted: #777777;
+      --plant: #7FA36B;
     }
 
-    h1 {
-      text-align: center;
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #fffaf2, #f7f1ec);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      color: var(--text);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1100px;
+      height: 86vh;
+      background: var(--cream);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(80, 30, 30, 0.18);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .header {
+      height: 95px;
+      background: linear-gradient(135deg, var(--ku-red), #B00034);
+      color: white;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .leaf-mark {
+      font-size: 38px;
+      opacity: 0.8;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+
+    .sidebar {
+      width: 260px;
+      padding: 28px 22px;
+      border-right: 1px solid var(--line);
+      background: rgba(255, 250, 246, 0.75);
+    }
+
+    .menu-item {
+      padding: 15px 18px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      font-size: 17px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .menu-item.active {
+      background: var(--soft-red);
+      color: var(--ku-red);
+      font-weight: 700;
+    }
+
+    .side-note {
+      margin-top: 40px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+      font-size: 15px;
+      line-height: 1.7;
+      color: #555;
+    }
+
+    .side-note strong {
+      color: var(--ku-red);
+    }
+
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      position: relative;
+      background:
+        radial-gradient(circle at 95% 80%, rgba(127, 163, 107, 0.12), transparent 25%),
+        radial-gradient(circle at 10% 15%, rgba(140, 29, 64, 0.05), transparent 25%);
     }
 
     #chat {
-      background: white;
-      padding: 20px;
-      min-height: 300px;
-      border-radius: 12px;
-      margin-bottom: 15px;
+      flex: 1;
+      overflow-y: auto;
+      padding: 36px 40px 20px;
     }
 
-    input {
-      width: 75%;
-      padding: 12px;
-      font-size: 16px;
+    .message-row {
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      gap: 12px;
+    }
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--ku-red);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .bubble {
+      max-width: 65%;
+      padding: 16px 20px;
+      border-radius: 20px;
+      font-size: 17px;
+      line-height: 1.6;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      white-space: pre-wrap;
+    }
+
+    .bot .bubble {
+      background: white;
+      border: 1px solid #eee;
+      border-top-left-radius: 6px;
+    }
+
+    .user .bubble {
+      background: var(--soft-red);
+      border: 1px solid #efd2d2;
+      border-top-right-radius: 6px;
+    }
+
+    .time {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 4px 4px;
+    }
+
+    .input-area {
+      padding: 20px 32px 12px;
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,0.75);
+    }
+
+    .input-wrap {
+      display: flex;
+      gap: 12px;
+    }
+
+    #message {
+      flex: 1;
+      height: 58px;
+      border: 2px solid var(--ku-red);
+      border-radius: 16px;
+      padding: 0 18px;
+      font-size: 17px;
+      outline: none;
+      background: white;
+    }
+
+    #message:focus {
+      box-shadow: 0 0 0 4px rgba(140, 29, 64, 0.12);
     }
 
     button {
-      padding: 12px 18px;
-      font-size: 16px;
+      width: 86px;
+      border: none;
+      border-radius: 16px;
+      background: var(--ku-red);
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
       cursor: pointer;
     }
 
-    .user {
-      color: #333;
+    button:hover {
+      background: var(--ku-dark-red);
     }
 
-    .bot {
-      color: #0066cc;
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      padding-top: 10px;
+    }
+
+    .footer span {
+      color: var(--ku-red);
+      font-weight: 700;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 12px;
+      }
+
+      .app {
+        height: 92vh;
+        border-radius: 18px;
+      }
+
+      .header {
+        height: 80px;
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      #chat {
+        padding: 24px 18px 16px;
+      }
+
+      .bubble {
+        max-width: 78%;
+        font-size: 15px;
+      }
+
+      .input-area {
+        padding: 14px;
+      }
+
+      button {
+        width: 70px;
+      }
     }
   </style>
 </head>
+
 <body>
+  <div class="app">
+    <header class="header">
+      <h1>윤정 AI</h1>
+      <div class="leaf-mark">🌿</div>
+    </header>
 
-  <h1>AI 자기소개 챗봇</h1>
+    <div class="main">
+      <aside class="sidebar">
+        <div class="menu-item active">💬 새 채팅</div>
+        <div class="menu-item">👤 소개</div>
+        <div class="menu-item">🎂 생일</div>
+        <div class="menu-item">🌱 전공 및 관심 분야</div>
+        <div class="menu-item">🎓 연구 및 목표</div>
+        <div class="menu-item">📖 기타</div>
 
-  <div id="chat">
-    <p class="bot"><b>AI:</b> 안녕하세요! 저는 황윤정을 소개하는 AI 챗봇입니다. 궁금한 점을 물어보세요.</p>
+        <div class="side-note">
+          ✨ 저는 황윤정을 소개하는<br />
+          AI 챗봇입니다.<br />
+          <strong>무엇이든 질문해주세요!</strong>
+        </div>
+      </aside>
+
+      <section class="chat-area">
+        <div id="chat">
+          <div class="message-row bot">
+            <div class="avatar">🌱</div>
+            <div class="bubble">
+              안녕하세요. 저는 황윤정을 소개하는 AI 챗봇입니다.
+              전공, 관심 분야, 목표 등에 대해 질문해 주세요.
+            </div>
+            <div class="time">now</div>
+          </div>
+        </div>
+
+        <div class="input-area">
+          <div class="input-wrap">
+            <input id="message" placeholder="메시지를 입력하세요..." autocomplete="off" />
+            <button onclick="sendMessage()">➤</button>
+          </div>
+          <div class="footer">Powered by <span>Google Gemini</span></div>
+        </div>
+      </section>
+    </div>
   </div>
 
-  <input id="message" placeholder="예: 전공이 뭐야?" />
-  <button onclick="sendMessage()">전송</button>
-
   <script>
+    const input = document.getElementById("message");
+    const chat = document.getElementById("chat");
+
+    function getTime() {
+      const now = new Date();
+      return now.toLocaleTimeString("ko-KR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function addMessage(role, text) {
+      const row = document.createElement("div");
+      row.className = `message-row ${role}`;
+
+      if (role === "bot") {
+        row.innerHTML = `
+          <div class="avatar">🌱</div>
+          <div class="bubble">${text}</div>
+          <div class="time">${getTime()}</div>
+        `;
+      } else {
+        row.innerHTML = `
+          <div class="time">${getTime()}</div>
+          <div class="bubble">${text}</div>
+        `;
+      }
+
+      chat.appendChild(row);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
     async function sendMessage() {
-      const input = document.getElementById("message");
-      const chat = document.getElementById("chat");
-      const message = input.value;
+      const message = input.value.trim();
+      if (!message) return;
 
-      if (!message.trim()) return;
-
-      chat.innerHTML += `<p class="user"><b>나:</b> ${message}</p>`;
+      addMessage("user", message);
       input.value = "";
 
-      const response = await fetch("/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message: message })
-      });
+      addMessage("bot", "답변을 생성하고 있습니다...");
 
-      const data = await response.json();
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: message })
+        });
 
-      chat.innerHTML += `<p class="bot"><b>AI:</b> ${data.reply}</p>`;
+        const data = await response.json();
+
+        const lastBot = chat.lastElementChild.querySelector(".bubble");
+        lastBot.textContent = data.reply || "답변을 불러오지 못했습니다.";
+      } catch (error) {
+        const lastBot = chat.lastElementChild.querySelector(".bubble");
+        lastBot.textContent = "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+      }
     }
-  </script>
 
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    });
+  </script>
 </body>
 </html>
