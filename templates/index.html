@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 자기소개 챗봇</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f7f7f7;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #chat {
+      background: white;
+      padding: 20px;
+      min-height: 300px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 75%;
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .user {
+      color: #333;
+    }
+
+    .bot {
+      color: #0066cc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>AI 자기소개 챗봇</h1>
+
+  <div id="chat">
+    <p class="bot"><b>AI:</b> 안녕하세요! 저는 황윤정을 소개하는 AI 챗봇입니다. 궁금한 점을 물어보세요.</p>
+  </div>
+
+  <input id="message" placeholder="예: 전공이 뭐야?" />
+  <button onclick="sendMessage()">전송</button>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("message");
+      const chat = document.getElementById("chat");
+      const message = input.value;
+
+      if (!message.trim()) return;
+
+      chat.innerHTML += `<p class="user"><b>나:</b> ${message}</p>`;
+      input.value = "";
+
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: message })
+      });
+
+      const data = await response.json();
+
+      chat.innerHTML += `<p class="bot"><b>AI:</b> ${data.reply}</p>`;
+    }
+  </script>
+
+</body>
+</html>
